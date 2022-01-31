@@ -1,11 +1,22 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Logo = () => {
+  const navigate = useNavigate();
+
+  const HomePage = () => {
+    navigate('/');
+  };
+
   return (
     <div
       style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}
     >
-      <img src='/tabibk.png' alt='lgo' />
+      <img
+        style={{ cursor: 'pointer' }}
+        onClick={HomePage}
+        src='/tabibk.png'
+        alt='lgo'
+      />
     </div>
   );
 };
