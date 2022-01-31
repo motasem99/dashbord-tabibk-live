@@ -1,6 +1,13 @@
 import { Fragment, useEffect, useState } from 'react';
 import { database } from '../firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 
 import DataTable from '../components/Table';
 import { makeStyles } from '@material-ui/core/styles';
@@ -33,13 +40,22 @@ const Home = () => {
     let listData = [];
     let lengthCon = [];
     const getDataAns = async () => {
-      const querySnapshot = await getDocs(
-        collection(database, 'Consultations')
-      );
-      // eslint-disable-next-line array-callback-return
-      querySnapshot.docs.map((doc) => {
-        listData.push(doc.data());
+      const colRef = collection(database, 'Consultations');
+
+      const q = query(colRef, orderBy('createdAt', 'desc'));
+
+      onSnapshot(q, (snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          listData.push({ ...doc.data() });
+        });
       });
+
+      // const querySnapshot = await getDocs(
+      //   collection(database, 'Consultations')
+      // );
+      // querySnapshot.docs.map((doc) => {
+      //   listData.push(doc.data());
+      // });
     };
     setDataCon(listData);
 
