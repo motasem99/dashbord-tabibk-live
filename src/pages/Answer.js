@@ -15,15 +15,13 @@ import Container from '@material-ui/core/Container';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import 'react-voice-recorder/dist/index.css';
+import MicRecorder from 'mic-recorder-to-mp3';
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
-
-import MicRecorder from 'mic-recorder-to-mp3';
-
 import { collection, addDoc, Timestamp, updateDoc } from 'firebase/firestore';
 
 const main = {
@@ -61,10 +59,10 @@ const Answer = () => {
   const storage = getStorage();
 
   const [isRecording, setIsRecording] = useState(false);
-  const [blobURL, setBlobUrl] = useState('');
   const [isBlocked, setIsBlocked] = useState(false);
-  const [voiceId, setVoiceId] = useState();
   const [showRecord, setShowRecord] = useState(false);
+  const [blobURL, setBlobUrl] = useState('');
+  const [voiceId, setVoiceId] = useState();
   const [blobListenRecord, setBlobListenRecord] = useState('');
 
   const handleShowRecord = () => {
@@ -93,7 +91,6 @@ const Answer = () => {
       .then(([buffer, blob]) => {
         const blobURL = URL.createObjectURL(blob);
         const binaryString = btoa(blobURL);
-        console.log(binaryString);
 
         setBlobListenRecord(blobURL);
         setBlobUrl(blob);
@@ -127,7 +124,6 @@ const Answer = () => {
                 ConsultationsId: dataCon.id,
                 Date: Timestamp.fromDate(new Date()),
               });
-              console.log('Document written with ID: ', docRef.id);
 
               const refCon = doc(database, 'Consultations', parsed.id);
               await updateDoc(refCon, {
@@ -153,7 +149,6 @@ const Answer = () => {
           ConsultationsId: dataCon.id,
           Date: Timestamp.fromDate(new Date()),
         });
-        console.log('Document written with ID: ', docRef.id);
         const refCon = doc(database, 'Consultations', parsed.id);
         console.log(docRef.id);
         await updateDoc(refCon, {
@@ -217,6 +212,7 @@ const Answer = () => {
             <Typography sx={{ mb: 1.5 }} color='text.secondary'>
               {moment(dataCon.createdAt).subtract().calendar()}
             </Typography>
+            <hr />
             <Typography style={{ fontSize: '25px' }} variant='body2'>
               الوصف :
             </Typography>
@@ -231,6 +227,7 @@ const Answer = () => {
                 {dataCon.consultationDescription}
               </Typography>
             )}
+            <hr />
 
             <Typography
               style={{ fontSize: '25px', marginTop: '2rem' }}

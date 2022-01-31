@@ -150,7 +150,6 @@ export default function EnhancedTable({ dataCon }) {
 
   const handleDelete = async (idDelete) => {
     setLoadingProgressDelete(true);
-    console.log(idDelete);
     await deleteDoc(doc(database, 'Consultations', idDelete));
     setLoadingProgressDelete(false);
     window.location.reload();
