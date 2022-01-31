@@ -13,6 +13,7 @@ import DataTable from '../components/Table';
 import { makeStyles } from '@material-ui/core/styles';
 import { Oval } from 'react-loader-spinner';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
+import Logo from '../components/Logo';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   lengthCount: {
     fontSize: '30px',
     marginRight: '9rem',
-    marginTop: '5rem',
+    marginTop: '3rem',
     display: 'flex',
     alignItems: 'center',
   },
@@ -94,6 +95,7 @@ const Home = () => {
         </div>
       ) : (
         <Fragment>
+          <Logo />
           <p className={classes.lengthCount} dir='rtl'>
             <MarkChatUnreadIcon
               style={{

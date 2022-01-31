@@ -23,6 +23,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 import { collection, addDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import Logo from '../components/Logo';
 
 const main = {
   marginBottom: '20px',
@@ -201,120 +202,124 @@ const Answer = () => {
           <Oval heigth='800' width='800' color='grey' ariaLabel='loading' />
         </div>
       ) : (
-        <Card
-          style={{ width: '80%', margin: '0 auto', marginTop: '10rem' }}
-          dir='rtl'
-        >
-          <CardContent>
-            <Typography variant='h5' component='div'>
-              أجب على استشارة {dataCon.userName}
-            </Typography>
-            <Typography sx={{ mb: 1.5 }} color='text.secondary'>
-              {moment(dataCon.createdAt).subtract().calendar()}
-            </Typography>
-            <hr />
-            <Typography style={{ fontSize: '25px' }} variant='body2'>
-              الوصف :
-            </Typography>
-            {dataCon.mediaType === 'voice' ? (
-              <div style={{ padding: '10px', fontSize: '20px' }}>
-                <a style={{ textDecoration: 'none' }} href={dataCon.mediaUrl}>
-                  اضغط لتحميل التسجيل الصوتي
-                </a>
-              </div>
-            ) : (
-              <Typography color='text.secondary' style={{ fontSize: '24px' }}>
-                {dataCon.consultationDescription}
+        <Fragment>
+          <Logo />
+          <Card
+            style={{ width: '80%', margin: '0 auto 3rem', marginTop: '3rem' }}
+            dir='rtl'
+          >
+            <CardContent>
+              <Typography variant='h5' component='div'>
+                أجب على استشارة {dataCon.userName}
               </Typography>
-            )}
-            <hr />
-
-            <Typography
-              style={{ fontSize: '25px', marginTop: '2rem' }}
-              variant='body2'
-            >
-              أدخل اجابتك :
-            </Typography>
-            <TextareaAutosize
-              aria-label='minimum height'
-              name='answer'
-              id='answer'
-              minRows={5}
-              disabled={showRecord}
-              ref={inputEl}
-              placeholder='أدخل اجابتك'
-              style={{
-                width: '90%',
-                marginTop: '1rem',
-                height: '100px',
-                fontSize: '20px',
-                outline: 'none',
-              }}
-            />
-
-            <Typography
-              style={{ fontSize: '25px', marginTop: '2rem' }}
-              variant='body2'
-            >
-              أدخل تسجيل صوتي :
-              <Button
-                variant='contained'
-                style={{ marginRight: '20px', borderRadius: '50px' }}
-                color='primary'
-                onClick={handleShowRecord}
-              >
-                <MicIcon />
-              </Button>
-            </Typography>
-
-            {showRecord && (
-              <div className='App' style={{ justifyContent: 'center' }}>
-                <Container maxWidth='sm' style={main}>
-                  <Button
-                    variant='contained'
-                    style={record}
-                    color='primary'
-                    onClick={start}
-                    disabled={isRecording}
-                  >
-                    <MicIcon /> ابدا التسجيل
-                  </Button>
-                  <Button
-                    variant='contained'
-                    style={stopStyle}
-                    color='primary'
-                    onClick={stop}
-                    disabled={!isRecording}
-                  >
-                    <MicOffIcon /> اوقف التسجيل
-                  </Button>
-                </Container>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <audio src={blobListenRecord} controls='controls' />
+              <Typography sx={{ mb: 1.5 }} color='text.secondary'>
+                {moment(dataCon.createdAt).subtract().calendar()}
+              </Typography>
+              <hr />
+              <Typography style={{ fontSize: '25px' }} variant='body2'>
+                الوصف :
+              </Typography>
+              {dataCon.mediaType === 'voice' ? (
+                <div style={{ padding: '10px', fontSize: '20px' }}>
+                  <a style={{ textDecoration: 'none' }} href={dataCon.mediaUrl}>
+                    اضغط لتحميل التسجيل الصوتي
+                  </a>
                 </div>
-              </div>
-            )}
+              ) : (
+                <Typography color='text.secondary' style={{ fontSize: '24px' }}>
+                  {dataCon.consultationDescription}
+                </Typography>
+              )}
+              <hr />
 
-            <div
-              style={{
-                display: 'flex',
-                marginTop: '1rem',
-              }}
-            >
-              <Button
-                style={{ width: '120px', fontSize: '20px' }}
-                variant='contained'
-                onClick={handleSend}
+              <Typography
+                style={{ fontSize: '25px', marginTop: '2rem' }}
+                variant='body2'
               >
-                {loadingProgress ? (
-                  <CircularProgress style={{ color: 'white' }} />
-                ) : (
-                  'أرسل'
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                أدخل اجابتك :
+              </Typography>
+              <TextareaAutosize
+                aria-label='minimum height'
+                name='answer'
+                id='answer'
+                minRows={5}
+                disabled={showRecord}
+                ref={inputEl}
+                placeholder='أدخل اجابتك ...'
+                style={{
+                  width: '90%',
+                  marginTop: '1rem',
+                  height: '100px',
+                  fontSize: '20px',
+                  outline: 'none',
+                }}
+              />
+
+              <Typography
+                style={{ fontSize: '25px', marginTop: '2rem' }}
+                variant='body2'
+              >
+                أدخل تسجيل صوتي :
+                <Button
+                  variant='contained'
+                  style={{ marginRight: '20px', borderRadius: '50px' }}
+                  color='primary'
+                  onClick={handleShowRecord}
+                >
+                  <MicIcon />
+                </Button>
+              </Typography>
+
+              {showRecord && (
+                <div className='App' style={{ justifyContent: 'center' }}>
+                  <Container maxWidth='sm' style={main}>
+                    <Button
+                      variant='contained'
+                      style={record}
+                      color='primary'
+                      onClick={start}
+                      disabled={isRecording}
+                    >
+                      <MicIcon /> ابدا التسجيل
+                    </Button>
+                    <Button
+                      variant='contained'
+                      style={stopStyle}
+                      color='primary'
+                      onClick={stop}
+                      disabled={!isRecording}
+                    >
+                      <MicOffIcon /> اوقف التسجيل
+                    </Button>
+                  </Container>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <audio src={blobListenRecord} controls='controls' />
+                  </div>
+                </div>
+              )}
+              <hr style={{ marginTop: '30px' }} />
+
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: '1rem',
+                }}
+              >
+                <Button
+                  style={{ width: '120px', fontSize: '20px' }}
+                  variant='contained'
+                  onClick={handleSend}
+                >
+                  {loadingProgress ? (
+                    <CircularProgress style={{ color: 'white' }} />
+                  ) : (
+                    'أرسل'
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </Fragment>
       )}
     </Fragment>
   );
