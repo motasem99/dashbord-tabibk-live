@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
   lengthCount: {
     fontSize: '30px',
-    marginLeft: '6rem',
+    marginRight: '9rem',
     marginTop: '5rem',
     display: 'flex',
     alignItems: 'center',
@@ -78,12 +78,12 @@ const Home = () => {
         </div>
       ) : (
         <Fragment>
-          <p className={classes.lengthCount}>
+          <p className={classes.lengthCount} dir='rtl'>
             <MarkChatUnreadIcon
               style={{
                 fontSize: '35px',
                 color: '#4f4fcd',
-                marginRight: '12px',
+                marginLeft: '12px',
               }}
             />
             هناك {lengthCount.length} استشارات غير مقروئة

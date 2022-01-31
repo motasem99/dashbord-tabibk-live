@@ -11,43 +11,164 @@ import Typography from '@mui/material/Typography';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@material-ui/core/Container';
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import 'react-voice-recorder/dist/index.css';
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage';
+
+import MicRecorder from 'mic-recorder-to-mp3';
 
 import { collection, addDoc, Timestamp, updateDoc } from 'firebase/firestore';
+
+const main = {
+  marginBottom: '20px',
+  marginTop: '20px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  width: '30%',
+};
+const record = {
+  position: 'relative',
+  right: '60px',
+  borderRadius: '50px',
+};
+const stopStyle = {
+  position: 'relative',
+  left: '60px',
+  borderRadius: '50px',
+};
+
+const Mp3Recorder = new MicRecorder({
+  bitRate: 64,
+  prefix: 'data:audio/wav;base64,',
+});
 
 const Answer = () => {
   const [loading, setLoading] = useState(true);
   const [dataCon, setDataCon] = useState();
   const parsed = qs.parse(window.location.search);
-  const inputEl = useRef(null);
+  const inputEl = useRef('');
   const navigate = useNavigate();
   const moment = require('moment'); // require
   const [loadingProgress, setLoadingProgress] = useState(false);
 
+  const storage = getStorage();
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [blobURL, setBlobUrl] = useState('');
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [voiceId, setVoiceId] = useState();
+  const [showRecord, setShowRecord] = useState(false);
+  const [blobListenRecord, setBlobListenRecord] = useState('');
+
+  const handleShowRecord = () => {
+    if (showRecord === false) {
+      setShowRecord(true);
+    } else {
+      setShowRecord(false);
+    }
+  };
+
+  const start = () => {
+    if (isBlocked) {
+      console.log('Permission Denied');
+    } else {
+      Mp3Recorder.start()
+        .then(() => {
+          setIsRecording(true);
+        })
+        .catch((e) => console.error(e));
+    }
+  };
+
+  const stop = () => {
+    Mp3Recorder.stop()
+      .getMp3()
+      .then(([buffer, blob]) => {
+        const blobURL = URL.createObjectURL(blob);
+        const binaryString = btoa(blobURL);
+        console.log(binaryString);
+
+        setBlobListenRecord(blobURL);
+        setBlobUrl(blob);
+        setVoiceId(binaryString);
+        setIsRecording(false);
+      })
+      .catch((e) => console.log(e));
+  };
+
   const handleSend = async () => {
     try {
-      setLoadingProgress(true);
-      const docRef = await addDoc(collection(database, 'answers'), {
-        Answer: inputEl.current.value,
-        ConsultationsId: dataCon.id,
-        Date: Timestamp.fromDate(new Date()),
-      });
-      console.log('Document written with ID: ', docRef.id);
+      if (inputEl.current.value === '' && blobURL) {
+        const storageRef = ref(storage, 'answerVoice/' + voiceId);
+        const uploadTask = uploadBytesResumable(storageRef, blobURL);
 
-      const ref = doc(database, 'Consultations', parsed.id);
-      console.log(docRef.id);
-      await updateDoc(ref, {
-        isReplay: true,
-        answerId: docRef.id,
-      })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setLoadingProgress(true);
+            console.log('Upload is ' + progress + '% done');
+          },
+          (err) => console.log(err),
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+              const docRef = await addDoc(collection(database, 'answers'), {
+                Answer: url,
+                answerType: 'voice',
+                blobListenRecord,
+                ConsultationsId: dataCon.id,
+                Date: Timestamp.fromDate(new Date()),
+              });
+              console.log('Document written with ID: ', docRef.id);
+
+              const refCon = doc(database, 'Consultations', parsed.id);
+              await updateDoc(refCon, {
+                isReplay: true,
+                answerId: docRef.id,
+              })
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+              setLoadingProgress(false);
+              navigate('/');
+            });
+          }
+        );
+      } else {
+        setLoadingProgress(true);
+        const docRef = await addDoc(collection(database, 'answers'), {
+          Answer: inputEl.current.value,
+          answerType: 'text',
+          ConsultationsId: dataCon.id,
+          Date: Timestamp.fromDate(new Date()),
         });
-
-      setLoadingProgress(false);
-      navigate('/');
+        console.log('Document written with ID: ', docRef.id);
+        const refCon = doc(database, 'Consultations', parsed.id);
+        console.log(docRef.id);
+        await updateDoc(refCon, {
+          isReplay: true,
+          answerId: docRef.id,
+        })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        setLoadingProgress(false);
+        navigate('/');
+      }
     } catch (e) {
       console.error('Error adding document: ', e);
     }
@@ -115,13 +236,14 @@ const Answer = () => {
               style={{ fontSize: '25px', marginTop: '2rem' }}
               variant='body2'
             >
-              أدخل اجابتك
+              أدخل اجابتك :
             </Typography>
             <TextareaAutosize
               aria-label='minimum height'
               name='answer'
               id='answer'
               minRows={5}
+              disabled={showRecord}
               ref={inputEl}
               placeholder='أدخل اجابتك'
               style={{
@@ -132,6 +254,50 @@ const Answer = () => {
                 outline: 'none',
               }}
             />
+
+            <Typography
+              style={{ fontSize: '25px', marginTop: '2rem' }}
+              variant='body2'
+            >
+              أدخل تسجيل صوتي :
+              <Button
+                variant='contained'
+                style={{ marginRight: '20px', borderRadius: '50px' }}
+                color='primary'
+                onClick={handleShowRecord}
+              >
+                <MicIcon />
+              </Button>
+            </Typography>
+
+            {showRecord && (
+              <div className='App' style={{ justifyContent: 'center' }}>
+                <Container maxWidth='sm' style={main}>
+                  <Button
+                    variant='contained'
+                    style={record}
+                    color='primary'
+                    onClick={start}
+                    disabled={isRecording}
+                  >
+                    <MicIcon /> ابدا التسجيل
+                  </Button>
+                  <Button
+                    variant='contained'
+                    style={stopStyle}
+                    color='primary'
+                    onClick={stop}
+                    disabled={!isRecording}
+                  >
+                    <MicOffIcon /> اوقف التسجيل
+                  </Button>
+                </Container>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <audio src={blobListenRecord} controls='controls' />
+                </div>
+              </div>
+            )}
+
             <div
               style={{
                 display: 'flex',
