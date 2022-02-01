@@ -15,7 +15,8 @@ import { visuallyHidden } from '@mui/utils';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { database } from '../firebase';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -71,6 +72,19 @@ const headCells = [
   },
 ];
 
+const useStyles = makeStyles({
+  alertDelete: {
+    marginBottom: '1rem',
+    '& .MuiAlert-icon': {
+      fontSize: 40,
+      marginLeft: '12px',
+    },
+    '& .MuiAlert-message': {
+      fontSize: '24px',
+    },
+  },
+});
+
 function EnhancedTableHead(props) {
   const { order, orderBy } = props;
 
@@ -117,8 +131,8 @@ export default function EnhancedTable({ dataCon }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const moment = require('moment'); // require
-  const [loadingProgressDelete, setLoadingProgressDelete] =
-    React.useState(false);
+  const [showAlert, setShowAlert] = React.useState(false);
+  const classes = useStyles();
 
   function createData(name, calories, fat, description, mobile, idToUpdate) {
     return {
@@ -143,10 +157,16 @@ export default function EnhancedTable({ dataCon }) {
   });
 
   const handleDelete = async (idDelete) => {
-    setLoadingProgressDelete(true);
-    await deleteDoc(doc(database, 'Consultations', idDelete));
-    setLoadingProgressDelete(false);
-    window.location.reload();
+    try {
+      setShowAlert(true);
+      await deleteDoc(doc(database, 'Consultations', idDelete));
+      setTimeout(() => {
+        setShowAlert(false);
+        window.location.reload();
+      }, 2000);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleRequestSort = (event, property) => {
@@ -201,6 +221,12 @@ export default function EnhancedTable({ dataCon }) {
 
   return (
     <Box sx={{ width: '100%' }}>
+      {showAlert && (
+        <Alert dir='rtl' severity='error' className={classes.alertDelete}>
+          تم حذف الاستشارة
+        </Alert>
+      )}
+
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle'>
@@ -255,7 +281,7 @@ export default function EnhancedTable({ dataCon }) {
                         {row.fat ? (
                           <div>
                             <Button
-                              onClick={handleDelete}
+                              onClick={() => handleDelete(row.idToUpdate)}
                               variant='contained'
                               color='error'
                               style={{ marginRight: '10px' }}
@@ -263,11 +289,7 @@ export default function EnhancedTable({ dataCon }) {
                                 <DeleteIcon style={{ marginRight: '10px' }} />
                               }
                             >
-                              {loadingProgressDelete ? (
-                                <CircularProgress style={{ color: 'white' }} />
-                              ) : (
-                                'حذف الاستشارة'
-                              )}
+                              حذف
                             </Button>
                             <Button
                               style={{ width: '100px' }}
