@@ -103,7 +103,7 @@ const AnswerCard = ({ dataCon }) => {
         to: `/topics/${dataCon.deviceId}`,
         notification: {
           title: 'شكرا لانضمامكم لطبيبك لايف',
-          body: 'لقد تم الاستجابة على استشارتك',
+          body: 'لقد تم الاجابة على استشارتك',
         },
       },
       {
