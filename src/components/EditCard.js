@@ -18,6 +18,7 @@ import {
 } from 'firebase/storage';
 import MicRecorder from 'mic-recorder-to-mp3';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const main = {
   marginBottom: '20px',
@@ -90,6 +91,26 @@ const EditCard = ({ dataCon, dataAnswer }) => {
       .catch((e) => console.log(e));
   };
 
+  const sendEditNotification = async () => {
+    await axios.post(
+      `https://fcm.googleapis.com/fcm/send`,
+      {
+        to: `/topics/${dataCon.deviceId}`,
+        notification: {
+          title: 'تعديل',
+          body: 'لقد تم التعديل على استشارتك',
+        },
+      },
+      {
+        headers: {
+          Authorization:
+            'key = AAAAwV6lu5g:APA91bFxGVUSQN3-4IjYsXJLOoUmVIjB-vd53oibOGZq1k2PUBANqHLlrwhqy8nRIfcQmiWe9JtDKb8GRYMkrpBbL7fvN4tww9pDKflhW1Q_AdqQG-hayFTZnT5Q3Jz9RLHe4EUBR29c',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  };
+
   const handleUpdate = async () => {
     try {
       if (inputEl.current.value === '' && blobURL) {
@@ -115,6 +136,7 @@ const EditCard = ({ dataCon, dataAnswer }) => {
               })
                 .then((res) => {
                   console.log(res);
+                  sendEditNotification();
                 })
                 .catch((error) => {
                   console.log(error);
@@ -134,6 +156,7 @@ const EditCard = ({ dataCon, dataAnswer }) => {
         })
           .then((res) => {
             console.log(res);
+            sendEditNotification();
           })
           .catch((error) => {
             console.log(error);
