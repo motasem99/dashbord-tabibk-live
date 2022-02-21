@@ -14,6 +14,7 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "antd": "^4.18.5",
+    "axios": "^0.26.0",
     "firebase": "^9.6.5",
     "mic-recorder-to-mp3": "^2.2.2",
     "moment": "^2.29.1",

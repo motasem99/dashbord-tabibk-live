@@ -163,7 +163,7 @@ export default function EnhancedTable({ dataCon }) {
       setTimeout(() => {
         setShowAlert(false);
         window.location.reload();
-      }, 2000);
+      }, 1000);
     } catch (err) {
       console.log(err);
     }

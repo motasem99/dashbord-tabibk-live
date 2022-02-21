@@ -22,6 +22,7 @@ import {
 import { collection, addDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { database } from '../firebase';
 import { doc } from 'firebase/firestore';
+import axios from 'axios';
 
 const main = {
   marginBottom: '20px',
@@ -95,6 +96,26 @@ const AnswerCard = ({ dataCon }) => {
       .catch((e) => console.log(e));
   };
 
+  const sendNotification = async () => {
+    await axios.post(
+      `https://fcm.googleapis.com/fcm/send`,
+      {
+        to: `/topics/${dataCon.deviceId}`,
+        notification: {
+          title: 'شكرا لانضمامكم لطبيبك لايف',
+          body: 'لقد تم الاستجابة على استشارتك',
+        },
+      },
+      {
+        headers: {
+          Authorization:
+            'key = AAAAwV6lu5g:APA91bFxGVUSQN3-4IjYsXJLOoUmVIjB-vd53oibOGZq1k2PUBANqHLlrwhqy8nRIfcQmiWe9JtDKb8GRYMkrpBbL7fvN4tww9pDKflhW1Q_AdqQG-hayFTZnT5Q3Jz9RLHe4EUBR29c',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  };
+
   const handleSend = async () => {
     try {
       if (inputEl.current.value === '' && blobURL) {
@@ -127,6 +148,7 @@ const AnswerCard = ({ dataCon }) => {
               })
                 .then((res) => {
                   console.log(res);
+                  sendNotification();
                 })
                 .catch((error) => {
                   console.log(error);
@@ -152,6 +174,7 @@ const AnswerCard = ({ dataCon }) => {
         })
           .then((res) => {
             console.log(res);
+            sendNotification();
           })
           .catch((error) => {
             console.log(error);
