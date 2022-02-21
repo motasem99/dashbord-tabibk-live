@@ -132,6 +132,7 @@ const EditCard = ({ dataCon, dataAnswer }) => {
               await updateDoc(ref, {
                 Answer: url,
                 answerType: 'voice',
+                deviceId: dataCon.deviceId,
                 Date: Timestamp.fromDate(new Date()),
               })
                 .then((res) => {
@@ -152,6 +153,7 @@ const EditCard = ({ dataCon, dataAnswer }) => {
         await updateDoc(ref, {
           Answer: inputEl.current.value,
           answerType: 'text',
+          deviceId: dataCon.deviceId,
           Date: Timestamp.fromDate(new Date()),
         })
           .then((res) => {
@@ -181,7 +183,7 @@ const EditCard = ({ dataCon, dataAnswer }) => {
           </Typography>
         </div>
         <Typography sx={{ mb: 1.5 }} color='text.secondary'>
-          {moment(dataAnswer.createdAt).subtract().calendar()}
+          {moment(dataAnswer?.createdAt).subtract().calendar()}
         </Typography>
 
         <hr />

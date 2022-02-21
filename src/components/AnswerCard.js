@@ -138,6 +138,7 @@ const AnswerCard = ({ dataCon }) => {
                 answerType: 'voice',
                 blobListenRecord,
                 ConsultationsId: dataCon.id,
+                deviceId: dataCon.deviceId,
                 Date: Timestamp.fromDate(new Date()),
               });
 
@@ -164,6 +165,7 @@ const AnswerCard = ({ dataCon }) => {
           Answer: inputEl.current.value,
           answerType: 'text',
           ConsultationsId: dataCon.id,
+          deviceId: dataCon.deviceId,
           Date: Timestamp.fromDate(new Date()),
         });
         const refCon = doc(database, 'Consultations', parsed.id);
