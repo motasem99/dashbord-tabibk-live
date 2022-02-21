@@ -136,7 +136,6 @@ const AnswerCard = ({ dataCon }) => {
               const docRef = await addDoc(collection(database, 'answers'), {
                 Answer: url,
                 answerType: 'voice',
-                blobListenRecord,
                 ConsultationsId: dataCon.id,
                 deviceId: dataCon.deviceId,
                 Date: Timestamp.fromDate(new Date()),
