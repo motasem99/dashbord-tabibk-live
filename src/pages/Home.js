@@ -96,6 +96,7 @@ const Home = () => {
       ) : (
         <Fragment>
           <Logo />
+
           <p className={classes.lengthCount} dir='rtl'>
             <MarkChatUnreadIcon
               style={{
@@ -104,8 +105,24 @@ const Home = () => {
                 marginLeft: '12px',
               }}
             />
-            هناك {lengthCount.length} استشارات غير مقروئة
+            لديك {dataCon.length} من الاستشارات
           </p>
+
+          <div>
+            {lengthCount.length !== 0 && (
+              <p className={classes.lengthCount} dir='rtl'>
+                <MarkChatUnreadIcon
+                  style={{
+                    fontSize: '35px',
+                    color: '#ff3a3a',
+                    marginLeft: '12px',
+                  }}
+                />
+                لديك {lengthCount.length} استشارات غير مقروئة
+              </p>
+            )}
+          </div>
+
           <div className={classes.root}>
             <DataTable dataCon={dataCon} dir='rtl' />
           </div>

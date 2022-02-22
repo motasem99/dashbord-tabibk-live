@@ -9,13 +9,13 @@ const Logo = () => {
 
   return (
     <div
-      style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}
+      style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}
     >
       <img
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', width: '300px' }}
         onClick={HomePage}
-        src='/tabibk.png'
-        alt='lgo'
+        src='/tabibkLogo.jpeg'
+        alt='logo'
       />
     </div>
   );

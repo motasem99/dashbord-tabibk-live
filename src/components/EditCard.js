@@ -25,7 +25,7 @@ const main = {
   marginTop: '20px',
   display: 'flex',
   justifyContent: 'space-between',
-  width: '30%',
+  width: '50%',
 };
 const record = {
   position: 'relative',
