@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, Fragment } from 'react';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -23,6 +23,7 @@ import { collection, addDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { database } from '../firebase';
 import { doc } from 'firebase/firestore';
 import axios from 'axios';
+import GetApp from '@mui/icons-material/GetApp';
 
 const main = {
   marginBottom: '20px',
@@ -205,17 +206,73 @@ const AnswerCard = ({ dataCon }) => {
           الوصف :
         </Typography>
         {dataCon.mediaType === 'voice' ? (
-          <div style={{ padding: '10px', fontSize: '20px' }}>
-            <a style={{ textDecoration: 'none' }} href={dataCon.mediaUrl}>
-              اضغط لتحميل التسجيل الصوتي
-            </a>
-          </div>
+          <Fragment>
+            {dataCon.consultationDescription && (
+              <Typography
+                color='text.secondary'
+                style={{
+                  fontSize: '24px',
+                  backgroundColor: '#efefef',
+                  padding: '1rem',
+                }}
+              >
+                {dataCon.consultationDescription}
+              </Typography>
+            )}
+            <div style={{ fontSize: '20px', margin: '2rem 0' }}>
+              <a
+                style={{
+                  textDecoration: 'none',
+                  backgroundColor: '#efefef',
+                  padding: '1rem',
+                }}
+                href={dataCon.mediaUrl}
+              >
+                اضغط لتحميل التسجيل الصوتي
+              </a>
+            </div>
+          </Fragment>
         ) : (
-          <Typography color='text.secondary' style={{ fontSize: '24px' }}>
+          <Typography
+            color='text.secondary'
+            style={{
+              fontSize: '24px',
+              backgroundColor: '#efefef',
+              padding: '1rem',
+            }}
+          >
             {dataCon.consultationDescription}
           </Typography>
         )}
         <hr />
+
+        {dataCon.files && (
+          <div>
+            <Typography
+              variant='h3'
+              style={{ marginTop: '2rem', marginBottom: '1rem' }}
+              component='div'
+            >
+              ملفات مرفقة :
+            </Typography>
+            {dataCon.files.map((item) => {
+              return (
+                <div key={item}>
+                  <a href={item} style={{ textDecoration: 'none' }}>
+                    <Button
+                      style={{ marginBottom: '1rem' }}
+                      variant='contained'
+                      startIcon={<GetApp style={{ marginLeft: '10px' }} />}
+                    >
+                      Show details
+                    </Button>
+                  </a>
+                </div>
+              );
+            })}
+            <hr />
+          </div>
+        )}
 
         <Typography
           style={{ fontSize: '25px', marginTop: '2rem' }}

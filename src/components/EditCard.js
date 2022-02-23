@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, Fragment } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -19,6 +19,7 @@ import {
 import MicRecorder from 'mic-recorder-to-mp3';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { GetApp } from '@mui/icons-material';
 
 const main = {
   marginBottom: '20px',
@@ -193,18 +194,74 @@ const EditCard = ({ dataCon, dataAnswer }) => {
         </Typography>
 
         {dataCon.mediaType === 'voice' ? (
-          <div style={{ padding: '10px', fontSize: '20px' }}>
-            <a style={{ textDecoration: 'none' }} href={dataCon.mediaUrl}>
-              اضغط لتحميل التسجيل الصوتي
-            </a>
-          </div>
+          <Fragment>
+            {dataCon.consultationDescription && (
+              <Typography
+                color='text.secondary'
+                style={{
+                  fontSize: '24px',
+                  backgroundColor: '#efefef',
+                  padding: '1rem',
+                }}
+              >
+                {dataCon.consultationDescription}
+              </Typography>
+            )}
+            <div style={{ fontSize: '20px', margin: '2rem 0' }}>
+              <a
+                style={{
+                  textDecoration: 'none',
+                  backgroundColor: '#efefef',
+                  padding: '1rem',
+                }}
+                href={dataCon.mediaUrl}
+              >
+                اضغط لتحميل التسجيل الصوتي
+              </a>
+            </div>
+          </Fragment>
         ) : (
-          <Typography color='text.secondary' style={{ fontSize: '24px' }}>
+          <Typography
+            color='text.secondary'
+            style={{
+              fontSize: '24px',
+              backgroundColor: '#efefef',
+              padding: '1rem',
+            }}
+          >
             {dataCon.consultationDescription}
           </Typography>
         )}
 
         <hr />
+
+        {dataCon.files && (
+          <div>
+            <Typography
+              variant='h3'
+              style={{ marginTop: '2rem', marginBottom: '1rem' }}
+              component='div'
+            >
+              ملفات مرفقة :
+            </Typography>
+            {dataCon.files.map((item) => {
+              return (
+                <div key={item}>
+                  <a href={item} style={{ textDecoration: 'none' }}>
+                    <Button
+                      style={{ marginBottom: '1rem', fontSize: '18px' }}
+                      variant='contained'
+                      startIcon={<GetApp style={{ marginLeft: '10px' }} />}
+                    >
+                      عرض تفاصيل
+                    </Button>
+                  </a>
+                </div>
+              );
+            })}
+            <hr />
+          </div>
+        )}
 
         <Typography style={{ fontSize: '25px' }} variant='body2'>
           الاجابة على الاستشارة :
@@ -215,7 +272,14 @@ const EditCard = ({ dataCon, dataAnswer }) => {
             <audio src={dataAnswer?.Answer} controls />
           </div>
         ) : (
-          <Typography color='text.secondary' style={{ fontSize: '24px' }}>
+          <Typography
+            color='text.secondary'
+            style={{
+              fontSize: '24px',
+              backgroundColor: '#efefef',
+              padding: '1rem',
+            }}
+          >
             {dataAnswer?.Answer}
           </Typography>
         )}
