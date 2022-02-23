@@ -260,11 +260,11 @@ const AnswerCard = ({ dataCon }) => {
                 <div key={item}>
                   <a href={item} style={{ textDecoration: 'none' }}>
                     <Button
-                      style={{ marginBottom: '1rem' }}
+                      style={{ marginBottom: '1rem', fontSize: '18px' }}
                       variant='contained'
                       startIcon={<GetApp style={{ marginLeft: '10px' }} />}
                     >
-                      Show details
+                      عرض التفاصيل
                     </Button>
                   </a>
                 </div>
